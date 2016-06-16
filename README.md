@@ -14,6 +14,7 @@ The Tangible Characterization Toolkit for Tangible Interaction Design Inc.
 * JSON (file system - config files)
 * WiFi.RSSI() reported on OSC status
 * ADC Battery level check (and report) - Alternate: Fuel Guage IC
+* Store DEVICE NAME (e.g. TCT01, TCT02, etc.) in EEPROM (easier conditionals on firmware updates?)
 
 ## Hardware Requirements/Wishlist (clients)
 * ESP 12E
@@ -33,6 +34,7 @@ The Tangible Characterization Toolkit for Tangible Interaction Design Inc.
   - Reset Button
   - Check OTA Update Server?
   - Power switch
+* LiPo (Usually 1-2x 18650 or 1000mAh flat (e.g. 063450)
   
 ## OSC Message Structure
 
@@ -42,3 +44,29 @@ The Tangible Characterization Toolkit for Tangible Interaction Design Inc.
 |/outputModules|/name      |   |   |   |
 |none          |/name      |   |   |   |
 |none          |/name      |   |   |   |
+
+## Possible Modules
+
+### Inputs
+* **IR Proximity Array**
+* **Accelerometer** (gravity measure? Gravity + linear)
+* Finger Holes (touch, proximity, photo interrupt, etc)
+* 38kHz IR (i.e. fireflys + darktorch - requires multiple modules; Zoomable darktorch?)
+* Joystick
+
+### Outputs
+Many of these would be best in multiples - or several slaves from one master.
+* Baloon
+* **RGB Ball**
+* Linear Motor
+* LED Blinders
+* **Bubble Machine**
+* **Rover**
+* Tethered Airplane
+* String Rider
+
+### Other
+* OLED Display Sniffer + Message Translator (e.g. Touch OSC To devices)
+  + input buttons for mode etc.
+  + keyboard??? (assigning addresses)
+  + This might be a Pi + display or something else more complex than just an ESP8266
