@@ -21,18 +21,18 @@ The Tangible Characterization Toolkit for Tangible Interaction Design Inc.
 * MCP3208 ADC (x2 each)
 * MCP32017 i/o expander
 * 8 DIP switch
-  - port swap
-  - behavior/mode
-  - power source?? (USB v BAT) Just use a different charge module?
-  - ip mode (Static/dynamic)
+  - Port swap
+  - Behavior/Mode
+  - Power source?? (USB v BAT) Just use a different charge module?
+  - IP mode (Static/dynamic)
 * status LEDs (bottom/hidden):
-  - power
-  - connected
-  - firmware updating/updated
+  - Power
+  - Connected
+  - Firmware updating/updated
 * buttons/switches (bottom, internal):
   - Bootload Mode button
-  - Reset Button
-  - Check OTA Update Server?
+  - Reset button
+  - Request OTA pdate from server?
   - Power switch
 * LiPo (Usually 1-2x 18650 or 1000mAh flat (e.g. 063450)
   
@@ -53,20 +53,27 @@ The Tangible Characterization Toolkit for Tangible Interaction Design Inc.
 * Finger Holes (touch, proximity, photo interrupt, etc)
 * 38kHz IR (i.e. fireflys + darktorch - requires multiple modules; Zoomable darktorch?)
 * Joystick
+* Touch Panel (e.g. DS touch layer - no screen)
+* Face tracker (Camera Vision, likely just USB + simple Procesing app to analyze & join the multicast group)
+* Button(s) (like a button array to match IR Array?)
 
 ### Outputs
 Many of these would be best in multiples - or several slaves from one master.
 * Baloon
 * **RGB Ball**
-* Linear Motor
+* Linear Motor (fader motor or princess motor)
 * LED Blinders
 * **Bubble Machine**
 * **Rover**
 * Tethered Airplane
 * String Rider
+* Speaker cube (pregenerated set of simple beeps or honks or something)
+* **Pan/Tilt head*** (set up for face track?)
+* Antenna Motor
 
 ### Other
 * OLED Display Sniffer + Message Translator (e.g. Touch OSC To devices)
-  + input buttons for mode etc.
-  + keyboard??? (assigning addresses)
+  + Input buttons for mode etc.
+  + Keyboard??? (assigning addresses)
   + This might be a Pi + display or something else more complex than just an ESP8266
+  + DMX I/O??
