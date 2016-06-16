@@ -2,7 +2,7 @@
 The Tangible Characterization Toolkit for Tangible Interaction Design Inc. 
 
 # TODO
-[ ] Write TODO List
+- [ ] Write TODO List
 
 ## Software Requirements/Wishlist (general)
 * OSC for data exchange and status broadcast
