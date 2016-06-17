@@ -15,6 +15,7 @@ The Tangible Characterization Toolkit for Tangible Interaction Design Inc.
 * WiFi.RSSI() reported on OSC status
 * ADC Battery level check (and report) - Alternate: Fuel Guage IC
 * Store DEVICE NAME (e.g. TCT01, TCT02, etc.) in EEPROM (easier conditionals on firmware updates?)
+* Pairing mode! (hold a button to auto pair?)
 
 ## Hardware Requirements/Wishlist (clients)
 * ESP 12E
@@ -34,6 +35,7 @@ The Tangible Characterization Toolkit for Tangible Interaction Design Inc.
   - Reset button
   - Request OTA pdate from server?
   - Power switch
+  - Pairing button
 * LiPo (Usually 1-2x 18650 or 1000mAh flat (e.g. 063450)
   
 ## OSC Message Structure
