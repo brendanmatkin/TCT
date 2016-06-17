@@ -2,6 +2,14 @@
 The Tangible Characterization Toolkit for Tangible Interaction Design Inc. 
 
 # TODO
+
+### High Priority
+- [ ] OSC Receive (message or bundle?)
+- [ ] SPIFFS config file
+- [ ] Status LEDs
+
+### Low Priority
+- [ ] OSC Reports
 - [ ] Write TODO List
 
 ## Software Requirements/Wishlist (general)
