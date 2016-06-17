@@ -10,7 +10,7 @@ The Tangible Characterization Toolkit for Tangible Interaction Design Inc.
 
 ### Low Priority
 - [ ] OSC Reports
-- [ ] Write TODO List
+- [ ] Write TODO List 
 
 ## Software Requirements/Wishlist (general)
 * OSC for data exchange and status broadcast
