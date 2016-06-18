@@ -23,7 +23,7 @@ const char* deviceName = "TCT01";
 IPAddress mIP(239, 0, 0, 100);    // multicast ip address
 unsigned int mPort = 7777;        // multicast port
 
-TickerScheduler ts(1);        // ts(number of task tickers)
+TickerScheduler schedule(1);        // schedule(number of task tickers)
 MCP3208 adc1(15);             // adc1 on pin 15 (currently only 1 adc, but easier to add another if it's numbered)
 int xVal, yVal;
 
@@ -58,7 +58,7 @@ void setup() {
   Serial.println();
   yield();
 
-  ts.add(0,500,heartBeat);    // ts.add(id, period, callback, immediate fire (false)
+  schedule.add(0,500,heartBeat);    // schedule.add(id, period, callback, immediate fire (false)
   adc1.begin();               // init ADC (SPI)
   pinMode(ledPin, OUTPUT);    // start pin setup
 
@@ -71,13 +71,19 @@ void setup() {
 
 void loop() {
   ArduinoOTA.handle();
-  ts.update();
+  //schedule.update();
   yield();
-
+  
+  digitalWrite(ledPin, HIGH);
   xVal = adc1.analogRead(0);
   yVal = adc1.analogRead(1);
   sendOSCMessage("/outputModules/TCT01", xVal, yVal);
-  delay(5);
+  sendOSCMessage("/status/TCT01/frameRate", frameRate());
+  digitalWrite(ledPin, LOW);
+
+  //Serial.println(frameRate());
+  delay(3);
+  //yield();
 }
 
 
@@ -85,5 +91,17 @@ boolean heart;
 void heartBeat() {
   digitalWrite(ledPin, heart);
   heart = !heart;
+}
+
+// frameRate (not super important but interesting for early development & tests
+unsigned int prevTime;
+float avgFR;
+float frLerp = 0.01;
+int frameRate() {
+  unsigned int t = millis()-prevTime;
+  float fr = 1000/(float)t;
+  avgFR = frLerp*fr + (1.0-frLerp)*avgFR;
+  prevTime = millis();
+  return (int)avgFR;
 }
 
