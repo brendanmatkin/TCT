@@ -4,11 +4,14 @@ The Tangible Characterization Toolkit for Tangible Interaction Design Inc.
 # TODO
 
 ### High Priority
-- [ ] OSC Receive (message or bundle?)
-- [ ] SPIFFS config file
 - [ ] Status LEDs
+- [ ] TEST integration procedure w/ existing system(s)
+- [ ] OSC Receive (message or bundle?)
 
 ### Low Priority
+- [ ] Determine and order batteries!
+- [ ] ESP-based OTA sketch server
+- [ ] SPIFFS config file
 - [ ] OSC Reports
 - [ ] Write TODO List 
 
@@ -24,6 +27,7 @@ The Tangible Characterization Toolkit for Tangible Interaction Design Inc.
 * ADC Battery level check (and report) - Alternate: Fuel Guage IC
 * Store DEVICE NAME (e.g. TCT01, TCT02, etc.) in EEPROM (easier conditionals on firmware updates?)
 * Pairing mode! (hold a button to auto pair?)
+* Consider timetag usage, if at all (millis since startup?)
 
 ## Hardware Requirements/Wishlist (clients)
 * ESP 12E
@@ -52,8 +56,8 @@ The Tangible Characterization Toolkit for Tangible Interaction Design Inc.
 |---           |---        |---|---|---|
 |/inputModules |/name      |   |   |   |
 |/outputModules|/name      |   |   |   |
-|none          |/name      |   |   |   |
-|none          |/name      |   |   |   |
+|/status       |/name      |   |   |   |
+|/config       |/name      |   |   |   |
 
 ## Possible Modules
 
