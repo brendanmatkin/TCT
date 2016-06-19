@@ -12,7 +12,7 @@
 #include <SPI.h>
 
 #define ledPin 2
-
+#define OTAledPin ledPin
 
 WiFiUDP udp;
 
@@ -23,7 +23,7 @@ const char* deviceName = "TCT01";
 IPAddress mIP(239, 0, 0, 100);    // multicast ip address
 unsigned int mPort = 7777;        // multicast port
 
-TickerScheduler schedule(1);        // schedule(number of task tickers)
+TickerScheduler schedule(5);        // schedule(number of task tickers)
 MCP3208 adc1(15);             // adc1 on pin 15 (currently only 1 adc, but easier to add another if it's numbered)
 int xVal, yVal;
 
@@ -58,9 +58,10 @@ void setup() {
   Serial.println();
   yield();
 
-  schedule.add(0,500,heartBeat);    // schedule.add(id, period, callback, immediate fire (false)
+  //schedule.add(0,500,heartBeat);    // schedule.add(id, period, callback, immediate fire (false)
   adc1.begin();               // init ADC (SPI)
   pinMode(ledPin, OUTPUT);    // start pin setup
+  digitalWrite(ledPin, HIGH); // LED is active LOW
 
   Serial.printf("WiFi connected, %s ready \r\n", deviceName);
   Serial.print("IP address: ");
@@ -71,15 +72,15 @@ void setup() {
 
 void loop() {
   ArduinoOTA.handle();
-  //schedule.update();
+  schedule.update();
   yield();
   
-  digitalWrite(ledPin, HIGH);
+  //digitalWrite(ledPin, LOW);
   xVal = adc1.analogRead(0);
   yVal = adc1.analogRead(1);
   sendOSCMessage("/outputModules/TCT01", xVal, yVal);
   sendOSCMessage("/status/TCT01/frameRate", frameRate());
-  digitalWrite(ledPin, LOW);
+  //digitalWrite(ledPin, HIGH);
 
   //Serial.println(frameRate());
   delay(3);
