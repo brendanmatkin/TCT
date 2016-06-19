@@ -11,8 +11,9 @@
 #include <MCP3208.h>
 #include <SPI.h>
 
-#define ledPin 2
-#define OTAledPin ledPin
+#define OTA_LED_PIN LED_PIN
+#define LED_PIN 2
+
 
 WiFiUDP udp;
 
@@ -23,8 +24,9 @@ const char* deviceName = "TCT01";
 IPAddress mIP(239, 0, 0, 100);    // multicast ip address
 unsigned int mPort = 7777;        // multicast port
 
-TickerScheduler schedule(5);        // schedule(number of task tickers)
-MCP3208 adc1(15);             // adc1 on pin 15 (currently only 1 adc, but easier to add another if it's numbered)
+TickerScheduler schedule(5);      // schedule(number of task tickers)
+long heartBeat;                   // heartBeat timer
+MCP3208 adc1(15);                 // adc1 on pin 15 (currently only 1 adc, but easier to add another if it's numbered)
 int xVal, yVal;
 
 
@@ -58,10 +60,10 @@ void setup() {
   Serial.println();
   yield();
 
-  //schedule.add(0,500,heartBeat);    // schedule.add(id, period, callback, immediate fire (false)
+  schedule.add(0,3000,heartBeatTrigger);    // schedule.add(id, period, callback, immediate fire (false)
   adc1.begin();               // init ADC (SPI)
-  pinMode(ledPin, OUTPUT);    // start pin setup
-  digitalWrite(ledPin, HIGH); // LED is active LOW
+  pinMode(LED_PIN, OUTPUT);    // start pin setup
+  digitalWrite(LED_PIN, HIGH); // LED is active LOW
 
   Serial.printf("WiFi connected, %s ready \r\n", deviceName);
   Serial.print("IP address: ");
@@ -73,14 +75,17 @@ void setup() {
 void loop() {
   ArduinoOTA.handle();
   schedule.update();
+  if (heartBeat - millis() > 1) {
+    digitalWrite(LED_PIN, HIGH);  // turn off the led
+  }
   yield();
   
-  //digitalWrite(ledPin, LOW);
+  //digitalWrite(LED_PIN, LOW);
   xVal = adc1.analogRead(0);
   yVal = adc1.analogRead(1);
   sendOSCMessage("/outputModules/TCT01", xVal, yVal);
   sendOSCMessage("/status/TCT01/frameRate", frameRate());
-  //digitalWrite(ledPin, HIGH);
+  //digitalWrite(LED_PIN, HIGH);
 
   //Serial.println(frameRate());
   delay(3);
@@ -88,11 +93,13 @@ void loop() {
 }
 
 
-boolean heart;
-void heartBeat() {
-  digitalWrite(ledPin, heart);
-  heart = !heart;
+
+void heartBeatTrigger() {
+  heartBeat = millis();
+  digitalWrite(LED_PIN, LOW);
 }
+
+
 
 // frameRate (not super important but interesting for early development & tests
 unsigned int prevTime;
