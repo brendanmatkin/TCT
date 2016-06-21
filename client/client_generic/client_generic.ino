@@ -4,7 +4,6 @@
 #include <WiFiUdp.h>
 #include <OSCMessage.h>
 #include <OSCBundle.h>
-
 #include <ArduinoJson.h>
 #include "FS.h"
 #include <TickerScheduler.h>
@@ -14,15 +13,20 @@
 #define OTA_LED_PIN LED_PIN
 #define LED_PIN 2
 
+#define fourthOctect 01
+const char* deviceName = "TCT01";
+
 
 WiFiUDP udp;
 
 const char* ssid = "TCT";
 const char* password = "nosotros";
-const char* deviceName = "TCT01";
 
-IPAddress mIP(239, 0, 0, 100);    // multicast ip address
-unsigned int mPort = 7777;        // multicast port
+IPAddress statIP(10, 0, 2, fourthOctect);  // static IP
+IPAddress gateway(10, 0, 2, 254);          // gateway (for static)
+IPAddress subnet(255, 255, 255, 0);        // subnet (for static)
+IPAddress mIP(239, 0, 0, 100);             // multicast ip address
+unsigned int mPort = 7777;                 // multicast port
 
 TickerScheduler schedule(5);      // schedule(number of task tickers)
 long heartBeat;                   // heartBeat timer
@@ -44,8 +48,8 @@ void setup() {
   Serial.print("Connecting to ");        // connect to WiFi
   Serial.println(ssid);
   WiFi.mode(WIFI_STA);
+  WiFi.config(statIP, gateway, subnet);
   WiFi.begin(ssid, password);
-  //WiFi.config(ip, gateway, subnet);
   while (WiFi.waitForConnectResult() != WL_CONNECTED) {
     delay(3000);
     ESP.restart();
