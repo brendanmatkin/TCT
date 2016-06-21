@@ -27,7 +27,7 @@ The Tangible Characterization Toolkit for Tangible Interaction Design Inc.
 * ADC Battery level check (and report) - Alternate: Fuel Guage IC
 * Store DEVICE NAME (e.g. TCT01, TCT02, etc.) in EEPROM (easier conditionals on firmware updates?)
 * Pairing mode! (hold a button to auto pair?)
-* Consider timetag usage, if at all (millis since startup?)
+* Consider timetag usage, if at all (millis since startup? Probably not necessary?)
 
 ## Hardware Requirements/Wishlist (clients)
 * ESP 12E
@@ -42,16 +42,20 @@ The Tangible Characterization Toolkit for Tangible Interaction Design Inc.
   - Power
   - Connected
   - Firmware updating/updated
-* buttons/switches (bottom, internal):
-  - Bootload Mode button
+* buttons/switches (bottom or internal):
+  - Bootload button
   - Reset button
-  - Request OTA pdate from server?
+  - Request OTA update from server?
   - Power switch
-  - Pairing button
-* LiPo (Usually 1-2x 18650 or 1000mAh flat (e.g. 063450)
+  - Pairing button ?? (determine this behavior)
+* LiPo (Usually 1-2x 18650 or ~1000mAh flat (e.g. 063450)
+
+## Requirements/Wishlist (OTA Firmware & SPIFFS update server)
+* ESP 12E
+* SD Card Slot
+* Some buttons (not sure what is needed from this yet!)
   
 ## OSC Message Structure
-
 See NetworkingInformation.xls for working details (not hosted on this repo - sensitive information). 
 
 |Sorting Header|Device Name|Component Level|Type Tags|Arguments|
