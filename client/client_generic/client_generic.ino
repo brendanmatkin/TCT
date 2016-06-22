@@ -13,16 +13,19 @@
 #define OTA_LED_PIN LED_PIN
 #define LED_PIN 2
 
+WiFiUDP udp;
+
+/* start configurable */ 
 #define fourthOctect 01
 const char* deviceName = "TCT01";
-
-
-WiFiUDP udp;
 
 const char* ssid = "TCT";
 const char* password = "nosotros";
 
-IPAddress statIP(10, 0, 2, fourthOctect);  // static IP
+boolean sendStatus = false;
+/* end configurable*/
+
+IPAddress statIP(10, 0, 2, fourthOctect);  // static IP  - use statIP[index] to get & set individual octets
 IPAddress gateway(10, 0, 2, 254);          // gateway (for static)
 IPAddress subnet(255, 255, 255, 0);        // subnet (for static)
 IPAddress mIP(239, 0, 0, 100);             // multicast ip address
@@ -64,7 +67,7 @@ void setup() {
   Serial.println();
   yield();
 
-  schedule.add(0,3000,heartBeatTrigger);    // schedule.add(id, period, callback, immediate fire (false)
+  schedule.add(0,2000,heartBeatTrigger);    // schedule.add(id, period, callback, immediate fire (false)
   adc1.begin();               // init ADC (SPI)
   pinMode(LED_PIN, OUTPUT);    // start pin setup
   digitalWrite(LED_PIN, HIGH); // LED is active LOW
@@ -72,6 +75,7 @@ void setup() {
   Serial.printf("WiFi connected, %s ready \r\n", deviceName);
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
+  
   yield();
 }
 
@@ -83,16 +87,27 @@ void loop() {
     digitalWrite(LED_PIN, HIGH);  // turn off the led
   }
   yield();
+
   
-  //digitalWrite(LED_PIN, LOW);
-  xVal = adc1.analogRead(0);
-  yVal = adc1.analogRead(1);
-  sendOSCMessage("/outputModules/TCT01", xVal, yVal);
-  sendOSCMessage("/status/TCT01/frameRate", frameRate());
-  //digitalWrite(LED_PIN, HIGH);
+  int _xVal = adc1.analogRead(0);
+  int _yVal = adc1.analogRead(1);
+
+  /* only send message after crossing a change threshold
+   * TODO improve this algorithm - consider adding a flag + counter
+   * to track whether there is no change for multiple cycles.
+   */
+  int thresh = 2;
+  if (abs(xVal-_xVal) > thresh || abs(yVal-_yVal) > thresh) {
+    sendOSCMessage("/outputModules/TCT01", _xVal, _yVal);
+  }
+  xVal = _xVal;
+  yVal = _yVal;
+  
+  
+  if (sendStatus) sendOSCMessage("/status/TCT01/frameRate", frameRate());
 
   //Serial.println(frameRate());
-  delay(3);
+  delay(5);
   //yield();
 }
 

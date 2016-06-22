@@ -4,20 +4,26 @@ The Tangible Characterization Toolkit for Tangible Interaction Design Inc.
 # TODO
 
 ### High Priority
+- [ ] Config File
 - [ ] Status LEDs
+- [ ] DIP switch
 - [ ] TEST integration procedure w/ existing system(s)
 - [ ] OSC Receive (message or bundle?)
+- [ ] Send packets only on change! (don't send a new packet every cycle with no new information)
+- [ ] Two modules talking without user input (or pair button)
 
 ### Low Priority
 - [ ] Determine and order batteries!
 - [ ] ESP-based OTA sketch server
 - [ ] SPIFFS config file
 - [ ] OSC Reports
+- [ ] ESP internal ADC to measure battery voltage (prevent over-discharge on LiPo w/o protection circuit)
 - [ ] Write TODO List 
 
 ## Software Requirements/Wishlist (general)
 * OSC for data exchange and status broadcast
 * Multicast UDP (239.0.0.100:7777 or :3333)
+* Only send packets when there is new information (e.g. over a certain threshold of change)
 * Static IPs (for firmware updates, debug, etc)
 * OTA Updates via SD card ESP Server
 * m/DNS-SD (nice but not required)
