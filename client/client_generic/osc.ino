@@ -24,3 +24,17 @@ void sendOSCMessage(char* address, int a) {
   m.empty();
   yield();
 }
+
+void sendOSCMessage(char* address, int _dipStates[]) {
+  OSCMessage m(address);
+  if (udp.beginPacketMulticast(mIP, mPort, WiFi.localIP())){
+    for (int i = 0; i < 8; i++) {
+      m.add(_dipStates[i]);
+    }
+    m.send(udp);
+  }
+  udp.endPacket();
+  m.empty();
+  yield();
+}
+

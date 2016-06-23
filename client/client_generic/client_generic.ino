@@ -9,6 +9,8 @@
 #include <TickerScheduler.h>
 #include <MCP3208.h>
 #include <SPI.h>
+#include <Wire.h>
+#include "Adafruit_MCP23017.h"
 
 #define OTA_LED_PIN LED_PIN
 #define LED_PIN 2
@@ -34,6 +36,8 @@ unsigned int mPort = 7777;                 // multicast port
 TickerScheduler schedule(5);      // schedule(number of task tickers)
 long heartBeat;                   // heartBeat timer
 MCP3208 adc1(15);                 // adc1 on pin 15 (currently only 1 adc, but easier to add another if it's numbered)
+Adafruit_MCP23017 io;             // i/o expander (i2c)
+int dipStates[8];                 // dip switch states
 int xVal, yVal;
 
 
@@ -51,6 +55,7 @@ void setup() {
   Serial.print("Connecting to ");        // connect to WiFi
   Serial.println(ssid);
   WiFi.mode(WIFI_STA);
+  WiFi.hostname(deviceName);             // DHCP Hostname
   WiFi.config(statIP, gateway, subnet);
   WiFi.begin(ssid, password);
   while (WiFi.waitForConnectResult() != WL_CONNECTED) {
@@ -58,9 +63,9 @@ void setup() {
     ESP.restart();
   }
 
-  setupOTA();     // OTA
+  setupOTA();     // OTA, obviously..
   
-  while (!udp.beginMulticast(WiFi.localIP(), mIP, mPort)) {   // start UDP
+  while (!udp.beginMulticast(WiFi.localIP(), mIP, mPort)) {   // start listening on UDP
     delay(100);
     Serial.print("+");
   }
@@ -68,11 +73,16 @@ void setup() {
   yield();
 
   schedule.add(0,2000,heartBeatTrigger);    // schedule.add(id, period, callback, immediate fire (false)
-  adc1.begin();               // init ADC (SPI)
-  pinMode(LED_PIN, OUTPUT);    // start pin setup
-  digitalWrite(LED_PIN, HIGH); // LED is active LOW
+  adc1.begin();                  // init ADC (SPI)
+  io.begin();                    // init i/o expander (i2c)
+  pinMode(LED_PIN, OUTPUT);      // start pin setup
+  digitalWrite(LED_PIN, HIGH);   // LED is active LOW
+  for (int i = 0; i < 8; i++) {  // these are the DIP pins
+    io.pinMode(i, INPUT);
+    io.pullUp(i, HIGH);
+  }
 
-  Serial.printf("WiFi connected, %s ready \r\n", deviceName);
+  Serial.printf("WiFi connected, %s (%s) ready \r\n", deviceName, WiFi.macAddress().c_str());
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
   
@@ -102,7 +112,17 @@ void loop() {
   }
   xVal = _xVal;
   yVal = _yVal;
-  
+
+  boolean _sendDips = false;
+  for (int i = 0; i < 8; i++) {
+    int temp = io.digitalRead(i);
+    if (temp != dipStates[i]) {
+      _sendDips = true;
+      dipStates[i] = temp;
+    }
+  }
+  Serial.println(io.digitalRead(7));
+  if (_sendDips) sendOSCMessage("/status/TCT01/dips", dipStates);
   
   if (sendStatus) sendOSCMessage("/status/TCT01/frameRate", frameRate());
 
