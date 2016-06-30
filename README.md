@@ -82,22 +82,24 @@ See NetworkingInformation.xls for working details (not hosted on this repo - sen
 * Touch Panel (e.g. DS touch layer - no screen)
 * Face tracker (Camera Vision, likely just USB + simple Procesing app to analyze & join the multicast group)
 * Button(s) (like a button array to match IR Array?)
+* squishy surface
+* blow sensor
+* 
 
 ### Outputs
 Many of these would be best in multiples - or several slaves from one master.
 * Baloon
-* **RGB Ball**
-* Linear Motor (fader motor or princess motor)
-* LED Blinders
+* Linear Motor (fader motor or princess motor) (do this in multiples)
 * **Bubble Machine**
 * **Rover**
 * Tethered Airplane
-* String Rider
+* String Rider?????
 * Speaker cube (pregenerated set of simple beeps or honks or something)
-* **Pan/Tilt head*** (set up for face track?)
-* Antenna Motor (why? make this control something interesting)
+* **Pan/Tilt head*** - generic mount (stick w/ LED, face, etc. Must be strong.)
+* Antenna Motor (just build this one and make it interesting later)
 * Audio Trigger (plays more complex audio e.g. binaural clips, music, PD/Max bridge)
 * mini halo motion - opening flower, a bendy 'nose' (pan/tilt) -- flexible 3D print
+* super tiny demo (oled probably)
 
 ### Other
 * OLED Display Sniffer + Message Translator (e.g. Touch OSC To devices)
