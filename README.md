@@ -12,7 +12,7 @@ The Tangible Characterization Toolkit for Tangible Interaction Design Inc.
 - [ ] Send packets only on change! (don't send a new packet every cycle with no new information)
 - [ ] Two modules talking without user input (or pair button)
 
-### Low Priority
+### Lower Priority
 - [ ] Determine and order batteries!
 - [ ] ESP-based OTA sketch server
 - [ ] SPIFFS config file
@@ -44,11 +44,11 @@ The Tangible Characterization Toolkit for Tangible Interaction Design Inc.
   - Behavior/Mode
   - Power source?? (USB v BAT) Just use a different charge module?
   - IP mode (Static/dynamic)
-* status LEDs (bottom/hidden):
+* Status LEDs (bottom/hidden):
   - Power
   - Connected
   - Firmware updating/updated
-* buttons/switches (bottom or internal):
+* Buttons/switches (bottom or internal):
   - Bootload button
   - Reset button
   - Request OTA update from server?
@@ -56,7 +56,7 @@ The Tangible Characterization Toolkit for Tangible Interaction Design Inc.
   - Pairing button ?? (determine this behavior)
 * LiPo (Usually 1-2x 18650 or ~1000mAh flat (e.g. 063450)
 
-## Requirements/Wishlist (OTA Firmware & SPIFFS update server)
+## OTA Requirements/Wishlist (Over The Air Firmware & SPIFFS (file system) update server)
 * ESP 12E
 * SD Card Slot
 * Some buttons (not sure what is needed from this yet!)
@@ -95,7 +95,9 @@ Many of these would be best in multiples - or several slaves from one master.
 * String Rider
 * Speaker cube (pregenerated set of simple beeps or honks or something)
 * **Pan/Tilt head*** (set up for face track?)
-* Antenna Motor
+* Antenna Motor (why? make this control something interesting)
+* Audio Trigger (plays more complex audio e.g. binaural clips, music, PD/Max bridge)
+* mini halo motion - opening flower, a bendy 'nose' (pan/tilt) -- flexible 3D print
 
 ### Other
 * OLED Display Sniffer + Message Translator (e.g. Touch OSC To devices)
