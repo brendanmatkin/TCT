@@ -100,6 +100,8 @@ Many of these would be best in multiples - or several slaves from one master.
 * Audio Trigger (plays more complex audio e.g. binaural clips, music, PD/Max bridge)
 * mini halo motion - opening flower, a bendy 'nose' (pan/tilt) -- flexible 3D print
 * super tiny demo (oled probably)
+* rapid inflatable + _____?
+* silcone inflation dome (like pneumatible)
 
 ### Other
 * OLED Display Sniffer + Message Translator (e.g. Touch OSC To devices)

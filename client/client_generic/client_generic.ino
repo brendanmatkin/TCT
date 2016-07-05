@@ -2,15 +2,18 @@
 #include <ESP8266mDNS.h>
 #include <ArduinoOTA.h>
 #include <WiFiUdp.h>
+
 #include <OSCMessage.h>
 #include <OSCBundle.h>
+
 #include <ArduinoJson.h>
 #include "FS.h"
 #include <TickerScheduler.h>
-#include <MCP3208.h>
+
 #include <SPI.h>
 #include <Wire.h>
 #include "Adafruit_MCP23017.h"
+#include <MCP3208.h>
 
 #define OTA_LED_PIN LED_PIN
 #define LED_PIN 2
@@ -18,13 +21,14 @@
 WiFiUDP udp;
 
 /* start configurable */ 
-#define fourthOctect 01
-const char* deviceName = "TCT01";
+#define fourthOctect 04
+const char* deviceName = "TCT04";
 
 const char* ssid = "TCT";
 const char* password = "nosotros";
 
 boolean sendStatus = false;
+boolean _sendDips;            // always sends when a DIP state changes.
 /* end configurable*/
 
 IPAddress statIP(10, 0, 2, fourthOctect);  // static IP  - use statIP[index] to get & set individual octets
@@ -37,10 +41,18 @@ TickerScheduler schedule(5);      // schedule(number of task tickers)
 long heartBeat;                   // heartBeat timer
 MCP3208 adc1(15);                 // adc1 on pin 15 (currently only 1 adc, but easier to add another if it's numbered)
 Adafruit_MCP23017 io;             // i/o expander (i2c)
-int dipStates[8];                 // dip switch states
-int xVal, yVal;
+
+float xVal, yVal;            // OSC in/out (depending on device)
+int toSend[16];              // OSC values to send
+int received[16];            // OSC received values
+int dipStates[8];            // dip switch states (from second register of IO)
+int digitalReadValues[8];    // digital read values (from 1st register of IO)
+int analogReadValues[8];     // analog read values from ADC
 
 
+
+
+/* SETUP *******************************************************************************************************/
 void setup() {
   Serial.begin(115200);
   Serial.println("");
@@ -58,10 +70,18 @@ void setup() {
   WiFi.hostname(deviceName);             // DHCP Hostname
   WiFi.config(statIP, gateway, subnet);
   WiFi.begin(ssid, password);
-  while (WiFi.waitForConnectResult() != WL_CONNECTED) {
-    delay(3000);
-    ESP.restart();
+//  while (WiFi.waitForConnectResult() != WL_CONNECTED) {
+//    delay(3000);
+//    ESP.restart();
+//  }
+  int restartCounter = 0;
+  while (!WiFi.isConnected()) {
+    delay(100);
+    Serial.print(".");
+    restartCounter++;
+    if (restartCounter > 50) ESP.restart();  // if it takes more than 5 seconds to connect, restart! 
   }
+  Serial.println("  :)");
 
   setupOTA();     // OTA, obviously..
   
@@ -72,9 +92,13 @@ void setup() {
   Serial.println();
   yield();
 
-  schedule.add(0,2000,heartBeatTrigger);    // schedule.add(id, period, callback, immediate fire (false)
+  // schedule.add(index, period, callback, immediate fire (false))
+  schedule.add(0, 5, sendOSC);                
+  schedule.add(1, 2000, heartBeatTrigger);
+  
   adc1.begin();                  // init ADC (SPI)
   io.begin();                    // init i/o expander (i2c)
+  
   pinMode(LED_PIN, OUTPUT);      // start pin setup
   digitalWrite(LED_PIN, HIGH);   // LED is active LOW
   for (int i = 0; i < 8; i++) {  // these are the DIP pins
@@ -90,6 +114,9 @@ void setup() {
 }
 
 
+
+
+/* LOOP *******************************************************************************************************/
 void loop() {
   ArduinoOTA.handle();
   schedule.update();
@@ -98,41 +125,51 @@ void loop() {
   }
   yield();
 
+  parseOSC();
   
-  int _xVal = adc1.analogRead(0);
-  int _yVal = adc1.analogRead(1);
-
-  /* only send message after crossing a change threshold
-   * TODO improve this algorithm - consider adding a flag + counter
-   * to track whether there is no change for multiple cycles.
-   */
-  int thresh = 2;
-  if (abs(xVal-_xVal) > thresh || abs(yVal-_yVal) > thresh) {
-    sendOSCMessage("/outputModules/TCT01", _xVal, _yVal);
-  }
-  xVal = _xVal;
-  yVal = _yVal;
-
-  boolean _sendDips = false;
+  // check DIP switches
+  _sendDips = false;
   for (int i = 0; i < 8; i++) {
-    int temp = io.digitalRead(i);
+    uint8_t temp = io.digitalRead(i);
     if (temp != dipStates[i]) {
       _sendDips = true;
       dipStates[i] = temp;
     }
   }
-  Serial.println(io.digitalRead(7));
-  if (_sendDips) sendOSCMessage("/status/TCT01/dips", dipStates);
   
-  if (sendStatus) sendOSCMessage("/status/TCT01/frameRate", frameRate());
+  sendOSC(); // run by the scheduler??
 
   //Serial.println(frameRate());
-  delay(5);
-  //yield();
+  //delay(5);
+  yield();
 }
 
 
 
+
+/********************************************************************************************************/
+void sendOSC() {   // currently triggered by the scheduler
+  //digitalWrite(LED_PIN, LOW);  // onboard LED on
+
+  if (xVal < 1024) {
+    xVal++;
+    yVal++;
+  } else {
+    xVal = 0;
+    yVal = 0;
+  }
+  sendOSCMessage("/outputModules/TCT99/joystick", xVal, yVal);
+  
+  if (sendStatus && _sendDips) sendOSCMessage("/status/TCT01/dips", dipStates);
+  
+  if (sendStatus) sendOSCMessage("/status/TCT01/frameRate", frameRate());
+  //digitalWrite(LED_PIN, HIGH);  // onboard LED off
+}
+
+
+
+
+/********************************************************************************************************/
 void heartBeatTrigger() {
   heartBeat = millis();
   digitalWrite(LED_PIN, LOW);
@@ -140,6 +177,8 @@ void heartBeatTrigger() {
 
 
 
+
+/********************************************************************************************************/
 // frameRate (not super important but interesting for early development & tests
 unsigned int prevTime;
 float avgFR;
@@ -151,4 +190,3 @@ int frameRate() {
   prevTime = millis();
   return (int)avgFR;
 }
-
