@@ -20,6 +20,8 @@
 
 WiFiUDP udp;
 
+
+
 /* start configurable */ 
 #define fourthOctect 04
 const char* deviceName = "TCT04";
@@ -30,7 +32,12 @@ const char* password = "nosotros";
 int moduleType = 0;           // 0 sender, 1 receiver, 2 sniffer, 3 converter/translator, 4+ currently null
 boolean sendStatus = false;
 boolean _sendDips;            // always sends when a DIP state changes.
-/* end configurable*/
+
+boolean portSelect;           // TODO: implement this (DIP switch port select 7777/3333)
+
+/* end configurable */
+
+
 
 IPAddress statIP(10, 0, 2, fourthOctect);  // static IP  - use statIP[index] to get & set individual octets
 IPAddress gateway(10, 0, 2, 254);          // gateway (for static)
@@ -43,6 +50,7 @@ long heartBeat;                   // heartBeat timer
 MCP3208 adc1(15);                 // adc1 on pin 15 (currently only 1 adc, but easier to add another if it's numbered)
 Adafruit_MCP23017 io;             // i/o expander (i2c)
 
+/* all OSC sent or received values must be in one of these vars/arrays */
 float xVal, yVal;            // OSC in/out (depending on device)
 int toSend[16];              // OSC values to send
 int received[16];            // OSC received values
@@ -74,7 +82,7 @@ void setup() {
   WiFi.config(statIP, gateway, subnet);
   WiFi.begin(ssid, password);
 
-  // auto reset if it's not connecting (occasionally hangs otherwise)
+  /* auto reset if it's not connecting (occasionally hangs otherwise) */
   int restartCounter = 0;
   while (!WiFi.isConnected()) {
     delay(100);
@@ -82,11 +90,11 @@ void setup() {
     restartCounter++;
     if (restartCounter > 50) ESP.restart();  // if it takes more than 5 seconds to connect, restart! 
   }
-  Serial.println("  :)");
+  Serial.println("  :)"); // (smiley face) yay it worked! 
+  
+  setupOTA();             // OTA, obviously.. see OTA.ide
 
-  setupOTA();     // OTA, obviously..
-
-  // start listening on UDP
+  /* start listening on UDP */
   while (!udp.beginMulticast(WiFi.localIP(), mIP, mPort)) {
     delay(100);
     Serial.print("+");
@@ -94,28 +102,30 @@ void setup() {
   Serial.println();
   yield();
 
-  // schedule.add(index, period, callback, immediate fire (false))
+  /* ticker scheduling  --  schedule.add(index, period, callback, immediate fire (false)) */
   schedule.add(0, 5, sendOSC);                
   schedule.add(1, 2000, heartBeatTrigger);
 
+  /* init module types: */
   switch(moduleType) {   // 0 sender, 1 receiver, 2 sniffer, 3 converter/translator, 4+ currently null
     case 0:              // sender
       adc1.begin();      // init ADC (SPI)
       io.begin();        // init i/o expander (i2c)
-      s_moduleType = "/outputModules"
+      s_moduleType = "/outputModules";
       break;
     case 1:              // receiver
       io.begin();        // init i/o expander (i2c)
-      s_moduleType = "/inputModules"
+      s_moduleType = "/inputModules";
       break;
     default:
       io.begin();        // init i/o expander (i2c)
-      s_moduleType = "/misconfiguredModule"
+      s_moduleType = "/misconfiguredModule";
       break;
   }
   
-  pinMode(LED_PIN, OUTPUT);      // start pin setup
-  digitalWrite(LED_PIN, HIGH);   // LED is active LOW
+  /* init pins: */
+  pinMode(LED_PIN, OUTPUT);       // start pin setup
+  digitalWrite(LED_PIN, HIGH);    // LED is active LOW
   for (int i = 0; i < 12; i++) {  // the first 8 are the DIP, the next 4 are other inputs
     io.pinMode(i, INPUT);
     io.pullUp(i, HIGH);
@@ -125,6 +135,7 @@ void setup() {
     digitalWrite(i, LOW);
   }
 
+  /* who am I this time?  */
   Serial.printf("WiFi connected, %s (%s) ready \r\n", deviceName, WiFi.macAddress().c_str());
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
@@ -146,7 +157,7 @@ void loop() {
 
   parseOSC();
   
-  // check DIP switches
+  /* check DIP switches */
   _sendDips = false;
   for (int i = 0; i < 8; i++) {
     uint8_t temp = io.digitalRead(i);
@@ -156,34 +167,13 @@ void loop() {
     }
   }
   
-  sendOSC(); // run by the scheduler??
+  //sendOSC(); // currently controlled by the scheduler
 
   //Serial.println(frameRate());
   //delay(5);
   yield();
 }
 
-
-
-
-/********************************************************************************************************/
-void sendOSC() {   // currently triggered by the scheduler
-  //digitalWrite(LED_PIN, LOW);  // onboard LED on
-
-  if (xVal < 1024) {
-    xVal++;
-    yVal++;
-  } else {
-    xVal = 0;
-    yVal = 0;
-  }
-  sendOSCMessage("/outputModules/TCT99/joystick", xVal, yVal);
-  
-  if (sendStatus && _sendDips) sendOSCMessage("/status/TCT01/dips", dipStates);
-  
-  if (sendStatus) sendOSCMessage("/status/TCT01/frameRate", frameRate());
-  //digitalWrite(LED_PIN, HIGH);  // onboard LED off
-}
 
 
 

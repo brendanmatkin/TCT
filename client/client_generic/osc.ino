@@ -1,10 +1,38 @@
 
 
 /********************************************************************************************************/
+void sendOSC() {   // currently triggered by the scheduler
+  //digitalWrite(LED_PIN, LOW);  // onboard LED on
+
+//  if (xVal < 1024) {
+//    xVal++;
+//    yVal++;
+//  } else {
+//    xVal = 0;
+//    yVal = 0;
+//  }
+  if (moduleType == 0) {        // 0 sender, 1 receiver, 2 sniffer, 3 converter/translator, 4+ currently null
+    xVal = adc1.analogRead(0);
+    yVal = adc1.analogRead(1);
+    String s_addr = s_moduleType; s_addr += "/"; s_addr += deviceName; s_addr += "/joystick";
+    sendOSCMessage(s_addr.c_str(), xVal, yVal);
+  }
+
+  String s_addr = "/status/";
+  s_addr += deviceName;
+  String s_addr2 = s_addr + "/dips";
+  if (sendStatus && _sendDips) sendOSCMessage(s_addr2.c_str(), dipStates);
+
+  s_addr2 = s_addr + "/frameRate";
+  if (sendStatus) sendOSCMessage(s_addr2.c_str(), frameRate());
+  //digitalWrite(LED_PIN, HIGH);  // onboard LED off
+}
+
+/********************************************************************************************************/
 // low pass filter: 
 float avgA, avgB;
 // send 2 ints
-void sendOSCMessage(char* address, int a, int b) {
+void sendOSCMessage(const char* address, int a, int b) {
   float lerp = 0.75;
   avgA = lerp*a + (1.0-lerp)*avgA;
   avgB = lerp*b + (1.0-lerp)*avgB;
@@ -22,7 +50,7 @@ void sendOSCMessage(char* address, int a, int b) {
 
 /********************************************************************************************************/
 // send single int
-void sendOSCMessage(char* address, int a) {
+void sendOSCMessage(const char* address, int a) {
   OSCMessage m(address);
   if (udp.beginPacketMulticast(mIP, mPort, WiFi.localIP())){
     m.add(a).send(udp);
@@ -35,8 +63,8 @@ void sendOSCMessage(char* address, int a) {
 
 
 /********************************************************************************************************/
-// send 8 ints (DIP switches)
-void sendOSCMessage(char* address, int _dipStates[]) {
+// send 8 ints via an array (DIP switches)
+void sendOSCMessage(const char* address, int _dipStates[]) {
   OSCMessage m(address);
   if (udp.beginPacketMulticast(mIP, mPort, WiFi.localIP())){
     for (int i = 0; i < 8; i++) {
@@ -53,7 +81,7 @@ void sendOSCMessage(char* address, int _dipStates[]) {
 
 /********************************************************************************************************/
 // send 2 floats
-void sendOSCMessage(char* address, float _x, float _y) {
+void sendOSCMessage(const char* address, float _x, float _y) {
   OSCMessage m(address);
   if (udp.beginPacketMulticast(mIP, mPort, WiFi.localIP())){
     m.add(_x).add(_y).send(udp);
@@ -62,6 +90,8 @@ void sendOSCMessage(char* address, float _x, float _y) {
   m.empty();
   yield();
 }
+
+
 
 
 /********************************************************************************************************/
@@ -78,7 +108,7 @@ void parseOSC() {
 //      String buf;
 //      else (messageIn.getAddress(buf, 0);
     } else {
-      Serial.println("Bad packet");
+      Serial.println("Received bad packet");
     }
   }
 }
