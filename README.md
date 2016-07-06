@@ -37,8 +37,8 @@ The Tangible Characterization Toolkit for Tangible Interaction Design Inc.
 
 ## Hardware Requirements/Wishlist (clients)
 * ESP 12E
-* MCP3208 ADC (x2 each)
-* MCP32017 i/o expander
+* MCP3208 ADC (x2 in some)
+* MCP32017 i/o expander (maybe x2 in some)
 * 8 DIP switch
   - Port swap
   - Behavior/Mode
@@ -88,15 +88,15 @@ See NetworkingInformation.xls for working details (not hosted on this repo - sen
 
 ### Outputs
 Many of these would be best in multiples - or several slaves from one master.
-* Baloon
-* Linear Motor (fader motor or princess motor) (do this in multiples)
-* **Bubble Machine**
+* Balloon
+* **Linear Motor** (fader motor or princess motor) (do this in multiples)
+* Bubble Machine
 * **Rover**
-* Tethered Airplane
+* **Tethered Airplane**
 * String Rider?????
 * Speaker cube (pregenerated set of simple beeps or honks or something)
-* **Pan/Tilt head*** - generic mount (stick w/ LED, face, etc. Must be strong.)
-* Antenna Motor (just build this one and make it interesting later)
+* **Pan/Tilt head** - generic mount (stick w/ LED, face, etc. Must be strong.)
+* **Antenna Motor** (just build this one and make it interesting later)
 * Audio Trigger (plays more complex audio e.g. binaural clips, music, PD/Max bridge)
 * mini halo motion - opening flower, a bendy 'nose' (pan/tilt) -- flexible 3D print
 * super tiny demo (oled probably)

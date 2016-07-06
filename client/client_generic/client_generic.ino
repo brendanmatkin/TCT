@@ -27,6 +27,7 @@ const char* deviceName = "TCT04";
 const char* ssid = "TCT";
 const char* password = "nosotros";
 
+int moduleType = 0;           // 0 sender, 1 receiver, 2 sniffer, 3 converter/translator, 4+ currently null
 boolean sendStatus = false;
 boolean _sendDips;            // always sends when a DIP state changes.
 /* end configurable*/
@@ -49,6 +50,8 @@ int dipStates[8];            // dip switch states (from second register of IO)
 int digitalReadValues[8];    // digital read values (from 1st register of IO)
 int analogReadValues[8];     // analog read values from ADC
 
+char* s_moduleType = "";
+
 
 
 
@@ -70,10 +73,8 @@ void setup() {
   WiFi.hostname(deviceName);             // DHCP Hostname
   WiFi.config(statIP, gateway, subnet);
   WiFi.begin(ssid, password);
-//  while (WiFi.waitForConnectResult() != WL_CONNECTED) {
-//    delay(3000);
-//    ESP.restart();
-//  }
+
+  // auto reset if it's not connecting (occasionally hangs otherwise)
   int restartCounter = 0;
   while (!WiFi.isConnected()) {
     delay(100);
@@ -84,8 +85,9 @@ void setup() {
   Serial.println("  :)");
 
   setupOTA();     // OTA, obviously..
-  
-  while (!udp.beginMulticast(WiFi.localIP(), mIP, mPort)) {   // start listening on UDP
+
+  // start listening on UDP
+  while (!udp.beginMulticast(WiFi.localIP(), mIP, mPort)) {
     delay(100);
     Serial.print("+");
   }
@@ -95,15 +97,32 @@ void setup() {
   // schedule.add(index, period, callback, immediate fire (false))
   schedule.add(0, 5, sendOSC);                
   schedule.add(1, 2000, heartBeatTrigger);
-  
-  adc1.begin();                  // init ADC (SPI)
-  io.begin();                    // init i/o expander (i2c)
+
+  switch(moduleType) {   // 0 sender, 1 receiver, 2 sniffer, 3 converter/translator, 4+ currently null
+    case 0:              // sender
+      adc1.begin();      // init ADC (SPI)
+      io.begin();        // init i/o expander (i2c)
+      s_moduleType = "/outputModules"
+      break;
+    case 1:              // receiver
+      io.begin();        // init i/o expander (i2c)
+      s_moduleType = "/inputModules"
+      break;
+    default:
+      io.begin();        // init i/o expander (i2c)
+      s_moduleType = "/misconfiguredModule"
+      break;
+  }
   
   pinMode(LED_PIN, OUTPUT);      // start pin setup
   digitalWrite(LED_PIN, HIGH);   // LED is active LOW
-  for (int i = 0; i < 8; i++) {  // these are the DIP pins
+  for (int i = 0; i < 12; i++) {  // the first 8 are the DIP, the next 4 are other inputs
     io.pinMode(i, INPUT);
     io.pullUp(i, HIGH);
+  }
+  for (int i = 12; i < 16; i++) {  // the last 4 i/o pins as outputs.
+    io.pinMode(i, OUTPUT);
+    digitalWrite(i, LOW);
   }
 
   Serial.printf("WiFi connected, %s (%s) ready \r\n", deviceName, WiFi.macAddress().c_str());
