@@ -29,9 +29,8 @@ void sendOSC() {   // currently triggered by the scheduler
 }
 
 /********************************************************************************************************/
-// low pass filter: 
-float avgA, avgB;
-// send 2 ints
+// send 2 ints 
+float avgA, avgB;  // low pass filter
 void sendOSCMessage(const char* address, int a, int b) {
   float lerp = 0.75;
   avgA = lerp*a + (1.0-lerp)*avgA;

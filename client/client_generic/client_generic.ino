@@ -23,8 +23,8 @@ WiFiUDP udp;
 
 
 /* start configurable */ 
-#define fourthOctect 04
-const char* deviceName = "TCT04";
+#define fourthOctect 01
+const char* deviceName = "TCT01";
 
 const char* ssid = "TCT";
 const char* password = "nosotros";
