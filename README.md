@@ -51,7 +51,7 @@ The Tangible Characterization Toolkit for Tangible Interaction Design Inc.
 * Buttons/switches (bottom or internal):
   - Bootload button
   - Reset button
-  - Request OTA update from server?
+  - Request OTA update from server (hold down bootload for x seconds)?
   - Power switch
   - Pairing button ?? (determine this behavior)
 * LiPo (Usually 1-2x 18650 or ~1000mAh flat (e.g. 063450)
