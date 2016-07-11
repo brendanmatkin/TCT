@@ -45,7 +45,7 @@ The Tangible Characterization Toolkit for Tangible Interaction Design Inc.
   - Power source?? (USB v BAT) Just use a different charge module?
   - IP mode (Static/dynamic)
 * Status LEDs (bottom/hidden):
-  - Pgg
+  - Power
   - Connected
   - Firmware updating/updated
 * Buttons/switches (bottom or internal):
