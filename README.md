@@ -78,11 +78,11 @@ See NetworkingInformation.xls for working details (not hosted on this repo - sen
 * **Accelerometer** (gravity measure? Gravity + linear)
 * Finger Holes (touch, proximity, photo interrupt, etc)
 * 38kHz IR (i.e. fireflys + darktorch - requires multiple modules; Zoomable darktorch?)
-* Joystick
+* **Joystick**
 * Touch Panel (e.g. DS touch layer - no screen)
 * Face tracker (Camera Vision, likely just USB + simple Procesing app to analyze & join the multicast group)
 * Button(s) (like a button array to match IR Array?)
-* squishy surface
+* **squishy surface**
 * blow sensor
 * 
 

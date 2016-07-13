@@ -48,7 +48,7 @@ unsigned int mPort = 7777;                 // multicast port
 TickerScheduler schedule(5);      // schedule(number of task tickers)
 long heartBeat;                   // heartBeat timer
 MCP3208 adc1(15);                 // adc1 on pin 15 (currently only 1 adc, but easier to add another if it's numbered)
-Adafruit_MCP23017 io;             // i/o expander (i2c)
+Adafruit_MCP23017 io1;            // i/o expander (i2c)
 
 /* all OSC sent or received values must be in one of these vars/arrays */
 float xVal, yVal;            // OSC in/out (depending on device)
@@ -110,15 +110,15 @@ void setup() {
   switch(moduleType) {   // 0 sender, 1 receiver, 2 sniffer, 3 converter/translator, 4+ currently null
     case 0:              // sender
       adc1.begin();      // init ADC (SPI)
-      io.begin();        // init i/o expander (i2c)
+      io1.begin();       // init i/o expander (i2c)
       s_moduleType = "/outputModules";
       break;
     case 1:              // receiver
-      io.begin();        // init i/o expander (i2c)
+      io1.begin();        // init i/o expander (i2c)
       s_moduleType = "/inputModules";
       break;
     default:
-      io.begin();        // init i/o expander (i2c)
+      io1.begin();        // init i/o expander (i2c)
       s_moduleType = "/misconfiguredModule";
       break;
   }
@@ -127,11 +127,11 @@ void setup() {
   pinMode(LED_PIN, OUTPUT);       // start pin setup
   digitalWrite(LED_PIN, HIGH);    // LED is active LOW
   for (int i = 0; i < 12; i++) {  // the first 8 are the DIP, the next 4 are other inputs
-    io.pinMode(i, INPUT);
-    io.pullUp(i, HIGH);
+    io1.pinMode(i, INPUT);
+    io1.pullUp(i, HIGH);
   }
   for (int i = 12; i < 16; i++) {  // the last 4 i/o pins as outputs.
-    io.pinMode(i, OUTPUT);
+    io1.pinMode(i, OUTPUT);
     digitalWrite(i, LOW);
   }
 
@@ -160,7 +160,7 @@ void loop() {
   /* check DIP switches */
   _sendDips = false;
   for (int i = 0; i < 8; i++) {
-    uint8_t temp = io.digitalRead(i);
+    uint8_t temp = io1.digitalRead(i);
     if (temp != dipStates[i]) {
       _sendDips = true;
       dipStates[i] = temp;
