@@ -15,8 +15,12 @@
 #include "Adafruit_MCP23017.h"
 #include <MCP3208.h>
 
+#include <NeoPixelBus.h>
+#include <NeoPixelAnimator.h>
+
 #define OTA_LED_PIN LED_PIN
 #define LED_PIN 2
+boolean onboardLED = false;
 
 WiFiUDP udp;
 
@@ -45,7 +49,12 @@ IPAddress subnet(255, 255, 255, 0);        // subnet (for static)
 IPAddress mIP(239, 0, 0, 100);             // multicast ip address
 unsigned int mPort = 7777;                 // multicast port
 
-TickerScheduler schedule(5);      // schedule(number of task tickers)
+TickerScheduler schedule(5);      // 0: sendOSC()
+                                  // 1: heartBeatTrigger();
+                                  // 2: heartBeatFade();     // not yet implemented
+                                  // 3:
+                                  // 4:
+
 long heartBeat;                   // heartBeat timer
 MCP3208 adc1(15);                 // adc1 on pin 15 (currently only 1 adc, but easier to add another if it's numbered)
 Adafruit_MCP23017 io1;            // i/o expander (i2c)
@@ -68,6 +77,8 @@ void setup() {
   Serial.begin(115200);
   Serial.println("");
   delay(1000);
+
+  setupStatusLED();
   
   Serial.println("Mounting FS...");      // begin SPIFFS
   if (!SPIFFS.begin()) {
@@ -124,8 +135,11 @@ void setup() {
   }
   
   /* init pins: */
-  pinMode(LED_PIN, OUTPUT);       // start pin setup
-  digitalWrite(LED_PIN, HIGH);    // LED is active LOW
+  if (onboardLED) {
+    pinMode(LED_PIN, OUTPUT);       // start pin setup
+    digitalWrite(LED_PIN, HIGH);    // LED is active LOW
+  }
+
   for (int i = 0; i < 12; i++) {  // the first 8 are the DIP, the next 4 are other inputs
     io1.pinMode(i, INPUT);
     io1.pullUp(i, HIGH);
@@ -151,7 +165,7 @@ void loop() {
   ArduinoOTA.handle();
   schedule.update();
   if (heartBeat - millis() > 1) {
-    digitalWrite(LED_PIN, HIGH);  // turn off the led
+    if (onboardLED) digitalWrite(LED_PIN, HIGH);  // turn off the led
   }
   yield();
 
@@ -169,6 +183,8 @@ void loop() {
   
   //sendOSC(); // currently controlled by the scheduler
 
+  updateStatusLED();
+
   //Serial.println(frameRate());
   //delay(5);
   yield();
@@ -181,7 +197,7 @@ void loop() {
 /********************************************************************************************************/
 void heartBeatTrigger() {
   heartBeat = millis();
-  digitalWrite(LED_PIN, LOW);
+  if (onboardLED) digitalWrite(LED_PIN, LOW);
 }
 
 
