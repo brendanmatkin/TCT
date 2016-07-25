@@ -15,8 +15,8 @@ NeoGamma<NeoGammaTableMethod> colorGamma;
 
 int hbState = 0;
 void neoHeartBeat(const AnimationParam& param) {
-  float hue = 100;  // the hue calculation in the library is janky (reversed and off by 100)
-  RgbColor color = RgbColor(HslColor((360-hue+100)/360.0f, 0.3f, 0.1f));  // lum: 0 = dark, 0.25 = normal, 0.5 = bright
+  float hue = 200;  // the hue calculation in the library is janky (reversed and off by 100)
+  RgbColor color = RgbColor(HslColor((360-hue+100)/360.0f, 0.5f, 0.25f));  // lum: 0 = dark, 0.25 = normal, 0.5 = bright
   //RgbColor color = HslColor(0.23f, 1.0f, 0.25f);
   RgbColor color1, color2, outColor;
   
@@ -35,19 +35,19 @@ void neoHeartBeat(const AnimationParam& param) {
   pixels.SetPixelColor(0, colorGamma.Correct(outColor));
 }
 
+
 void setupStatusLED() {
   pixels.Begin();
   pixels.Show();
 }
 
+
 void updateStatusLED() {
-  if (animations.IsAnimating())
-  {
+  if (animations.IsAnimating()) {
     animations.UpdateAnimations();
     pixels.Show();
   }
-  else
-  {
+  else {
     animations.StartAnimation(0, 2000, neoHeartBeat);
     hbState = (hbState + 1) % 2;
   }

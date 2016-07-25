@@ -20,15 +20,16 @@
 
 #define OTA_LED_PIN LED_PIN
 #define LED_PIN 2
-boolean onboardLED = false;
+
+boolean onboardLED = false;    /******** ONBOARD LED TESTING ********/
 
 WiFiUDP udp;
 
 
 
 /* start configurable */ 
-#define fourthOctect 01
-const char* deviceName = "TCT01";
+#define fourthOctect 03
+const char* deviceName = "TCT03";
 
 const char* ssid = "TCT";
 const char* password = "nosotros";
@@ -116,6 +117,7 @@ void setup() {
   /* ticker scheduling  --  schedule.add(index, period, callback, immediate fire (false)) */
   schedule.add(0, 5, sendOSC);                
   schedule.add(1, 2000, heartBeatTrigger);
+  schedule.add(2, 200, printRSSI);
 
   /* init module types: */
   switch(moduleType) {   // 0 sender, 1 receiver, 2 sniffer, 3 converter/translator, 4+ currently null
@@ -200,6 +202,10 @@ void heartBeatTrigger() {
   if (onboardLED) digitalWrite(LED_PIN, LOW);
 }
 
+void printRSSI() {
+  //Serial.println(WiFi.RSSI());
+  sendOSCMessage("/rssi", WiFi.RSSI());
+}
 
 
 
