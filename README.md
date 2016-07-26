@@ -62,7 +62,7 @@ The Tangible Characterization Toolkit for Tangible Interaction Design Inc.
 * Some buttons (not sure what is needed from this yet!)
   
 ## OSC Message Structure
-See NetworkingInformation.xls for working details (not hosted on this repo - sensitive information). 
+See NetworkingInformation.xls for working details (not hosted on this repo - sorta sensitive information). 
 
 |Sorting Header|Device Name|Component Level|Type Tags|Arguments|
 |---           |---        |---|---|---|
