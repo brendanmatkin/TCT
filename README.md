@@ -78,13 +78,15 @@ See NetworkingInformation.xls for working details (not hosted on this repo - sor
 * **Accelerometer** (gravity measure? Gravity + linear)
 * Finger Holes (touch, proximity, photo interrupt, etc)
 * 38kHz IR (i.e. fireflys + darktorch - requires multiple modules; Zoomable darktorch?)
-* Joystick
+* **Joystick**
 * Touch Panel (e.g. DS touch layer - no screen)
 * Face tracker (Camera Vision, likely just USB + simple Procesing app to analyze & join the multicast group)
-* Button(s) (like a button array to match IR Array?)
+* **Button**(s) (like a button array to match IR Array?) (nice and big)
 * squishy surface
-* blow sensor
-* 
+* **blow sensor**
+* **Sound Sensor** (volume)
+* **Knob/dial** (really big)
+* **Fader**
 
 ### Outputs
 Many of these would be best in multiples - or several slaves from one master.
@@ -94,7 +96,7 @@ Many of these would be best in multiples - or several slaves from one master.
 * **Rover**
 * **Tethered Airplane**
 * String Rider?????
-* Speaker cube (pregenerated set of simple beeps or honks or something)
+* **Buzzer/beeper/piezo (simple beeps or honks or something)**
 * **Pan/Tilt head** - generic mount (stick w/ LED, face, etc. Must be strong.)
 * **Antenna Motor** (just build this one and make it interesting later)
 * Audio Trigger (plays more complex audio e.g. binaural clips, music, PD/Max bridge)
@@ -102,6 +104,7 @@ Many of these would be best in multiples - or several slaves from one master.
 * super tiny demo (oled probably)
 * rapid inflatable + _____?
 * silcone inflation dome (like pneumatible)
+* **RGB Smiley Face**
 
 ### Other
 * OLED Display Sniffer + Message Translator (e.g. Touch OSC To devices)

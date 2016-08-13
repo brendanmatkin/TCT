@@ -26,7 +26,7 @@ class TCT {
 
     void sendData(float _a, float _b);  // send input data
     void sendInfo();                    // send module information: name, battery voltage, module type, mode, FW version, etc.
-    void checkMode();  					        // check DIP switches
+    void checkMode();  					        // check DIP switches (maybe pass a byte through - 8 switches)
     void readIncoming();				        // parse incoming OSC messages (maybe return something?)
 
     bool pairMode(bool buttonPress, uint8_t timeout);   	// returns true when paired
