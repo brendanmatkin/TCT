@@ -13,9 +13,17 @@ void sendOSC() {   // currently triggered by the scheduler
 //  }
   if (moduleType == 0) {        // 0 sender, 1 receiver, 2 sniffer, 3 converter/translator, 4+ currently null
     xVal = adc1.analogRead(0);
+    xVal = constrain(xVal, 0, 4096);
+    xVal = xVal/2048 - 1;
     yVal = adc1.analogRead(1);
+    yVal = constrain(yVal, 0, 4096);
+    yVal = yVal/2048 - 1;
+    zVal = adc1.analogRead(2);
+    zVal = constrain(zVal, 0, 4096);
+    zVal = zVal/2048 - 1;
     String s_addr = s_moduleType; s_addr += "/"; s_addr += deviceName; s_addr += "/joystick";
-    sendOSCMessage(s_addr.c_str(), xVal, yVal);
+    sendOSCMessage(s_addr.c_str(), xVal, yVal, zVal);
+    //Serial.println(xVal);
   }
 
   String s_addr = "/status/";
@@ -84,6 +92,15 @@ void sendOSCMessage(const char* address, float _x, float _y) {
   OSCMessage m(address);
   if (udp.beginPacketMulticast(mIP, mPort, WiFi.localIP())){
     m.add(_x).add(_y).send(udp);
+  }
+  udp.endPacket();
+  m.empty();
+  yield();
+}
+void sendOSCMessage(const char* address, float _x, float _y, float _z) {
+  OSCMessage m(address);
+  if (udp.beginPacketMulticast(mIP, mPort, WiFi.localIP())){
+    m.add(_x).add(_y).add(_z).send(udp);
   }
   udp.endPacket();
   m.empty();

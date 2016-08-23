@@ -61,7 +61,7 @@ MCP3208 adc1(15);                 // adc1 on pin 15 (currently only 1 adc, but e
 Adafruit_MCP23017 io1;            // i/o expander (i2c)
 
 /* all OSC sent or received values must be in one of these vars/arrays */
-float xVal, yVal;            // OSC in/out (depending on device)
+float xVal, yVal, zVal;      // OSC in/out (depending on device)
 int toSend[16];              // OSC values to send
 int received[16];            // OSC received values
 int dipStates[8];            // dip switch states (from second register of IO)
@@ -115,7 +115,7 @@ void setup() {
   yield();
 
   /* ticker scheduling  --  schedule.add(index, period, callback, immediate fire (false)) */
-  schedule.add(0, 5, sendOSC);                
+  schedule.add(0, 20, sendOSC);                
   schedule.add(1, 2000, heartBeatTrigger);
   schedule.add(2, 200, printRSSI);
 
@@ -152,11 +152,35 @@ void setup() {
   }
 
   /* who am I this time?  */
-  Serial.printf("WiFi connected, %s (%s) ready \r\n", deviceName, WiFi.macAddress().c_str());
+  Serial.println("\r\nWiFi connected.");
+  Serial.printf("%s (%s) ready. \r\n", deviceName, WiFi.macAddress().c_str());
   Serial.print("IP address: ");
   Serial.println(WiFi.localIP());
   
-  yield();
+//  String destIP; char *dest;
+//  if (multicast) {
+//    destIP = mIP.toString() + ":" + mPort;
+//    dest = "MULTICAST";
+//  }
+//  else {
+//    destIP = rIP.toString() + ":" + uSendPort;
+//    dest = "UNICAST";
+//  }
+//  Serial.printf("Sending %s OSC to: ", dest);
+//  Serial.println(destIP);
+//
+//  // get file version
+//  String sketchName = __FILE__;
+//  int snLength = sketchName.length();
+//  char vA = sketchName.charAt(snLength-7);
+//  char vB = sketchName.charAt(snLength-6);
+//  char vC = sketchName.charAt(snLength-5);
+//  Serial.printf("Firmware: v. %c%c%c \r\n\r\n", vA, vB, vC);
+
+  String s_addr = s_moduleType; s_addr += "/"; s_addr += deviceName; s_addr += "/joystick";
+  Serial.printf("osc address: %s \r\n", s_addr.c_str());
+  
+  yield();  // let the wifi stack do its thing
 }
 
 

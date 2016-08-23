@@ -44,6 +44,8 @@ The Tangible Characterization Toolkit for Tangible Interaction Design Inc.
   - Behavior/Mode
   - Power source?? (USB v BAT) Just use a different charge module?
   - IP mode (Static/dynamic)
+  - on-board smoothing/LPF (EWMAverage probably)
+  - TUIO/OSC standard (this can come later - requires some serious thinking)
 * Status LEDs (bottom/hidden):
   - Power
   - Connected
