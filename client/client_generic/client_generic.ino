@@ -20,16 +20,17 @@
 
 #define OTA_LED_PIN LED_PIN
 #define LED_PIN 2
+#define BL_PIN 0
 
-boolean onboardLED = false;    /******** ONBOARD LED TESTING ********/
+boolean onboardLED = true;    /******** ONBOARD LED TESTING ********/
 
 WiFiUDP udp;
 
 
 
 /* start configurable */ 
-#define fourthOctect 03
-const char* deviceName = "TCT03";
+#define fourthOctect 05
+const char* deviceName = "TCT05";
 
 const char* ssid = "TCT";
 const char* password = "nosotros";
@@ -70,6 +71,18 @@ int analogReadValues[8];     // analog read values from ADC
 
 char* s_moduleType = "";
 
+typedef enum {
+  INIT,       // Power on and connecting to network
+  HEARTBEAT,  // connected to TCT and sending OSC
+  SEARCHING,  // searching for OTA update server (server not yet implemented)
+  UPDATING,   // OTA UPDATE
+  UPDATED,    // OTA Update successfull
+  PAIRING,    // pairing mode
+  PAIRED,     // pair successful
+  ERR         // update failed, no network, SPIFFS mount failed, pair failed, etc.
+} status_t;
+
+status_t moduleStatus;
 
 
 
@@ -115,14 +128,14 @@ void setup() {
   yield();
 
   /* ticker scheduling  --  schedule.add(index, period, callback, immediate fire (false)) */
-  schedule.add(0, 20, sendOSC);                
+  schedule.add(0, 10, sendOSC);                
   schedule.add(1, 2000, heartBeatTrigger);
   schedule.add(2, 200, printRSSI);
 
   /* init module types: */
   switch(moduleType) {   // 0 sender, 1 receiver, 2 sniffer, 3 converter/translator, 4+ currently null
     case 0:              // sender
-      adc1.begin();      // init ADC (SPI)
+      //adc1.begin();      // init ADC (SPI)          // disable for encoder
       io1.begin();       // init i/o expander (i2c)
       s_moduleType = "/outputModules";
       break;
@@ -141,6 +154,7 @@ void setup() {
     pinMode(LED_PIN, OUTPUT);       // start pin setup
     digitalWrite(LED_PIN, HIGH);    // LED is active LOW
   }
+  pinMode(BL_PIN, INPUT);           // has external bootstrap resistor already, no Pullup
 
   for (int i = 0; i < 12; i++) {  // the first 8 are the DIP, the next 4 are other inputs
     io1.pinMode(i, INPUT);

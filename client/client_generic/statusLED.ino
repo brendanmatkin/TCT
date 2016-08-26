@@ -12,7 +12,6 @@ NeoPixelAnimator animations(PixelCount, NEO_MILLISECONDS);
 // NEO_DECASECONDS     10000    // ~7.5 days, 10 second updates
 NeoGamma<NeoGammaTableMethod> colorGamma;
 
-
 int hbState = 0;
 void neoHeartBeat(const AnimationParam& param) {
   float hue = 200;  // the hue calculation in the library is janky (reversed and off by 100)

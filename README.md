@@ -11,6 +11,7 @@ The Tangible Characterization Toolkit for Tangible Interaction Design Inc.
 - [ ] OSC Receive (message or bundle?)
 - [ ] Send packets only on change! (don't send a new packet every cycle with no new information)
 - [ ] Two modules talking without user input (or pair button)
+- [ ] Make ESP mini router for travel/convenience testing (TCT AP, 10.0.2.254). 
 
 ### Lower Priority
 - [ ] Determine and order batteries!
