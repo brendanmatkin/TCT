@@ -1,6 +1,13 @@
 # TCT
 The Tangible Characterization Toolkit for Tangible Interaction Design Inc. 
 
+# Message Structure:
+**standard message:** address | xVal(f) | yVal(f) | zVal(f) | x16(i) 
+  notes: 
+  * x-, y-, zVal are all -1.0f to 1.0f
+  * 16 ints belong to either toSend[] or received[]
+  * address is still being finalized... see below 
+
 # TODO
 - [ ] Config File
 - [x] Status LEDs (ws2812)
@@ -102,6 +109,7 @@ Many of these would be best in multiples - or several slaves from one master.
 - [ ] super tiny demo (oled probably)
 - [ ] rapid inflatable + _____?
 - [ ] silcone inflation dome (like pneumatible)
+- [ ] thermal printer something...
 
 ### Other
 * OLED Display Sniffer + Message Translator (e.g. Touch OSC To devices)

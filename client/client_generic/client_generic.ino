@@ -29,8 +29,8 @@ WiFiUDP udp;
 
 
 /* start configurable */ 
-#define fourthOctect 05
-const char* deviceName = "TCT05";
+#define fourthOctect 06
+const char* deviceName = "TCT06";
 
 const char* ssid = "TCT";
 const char* password = "nosotros";
@@ -54,7 +54,7 @@ unsigned int mPort = 7777;                 // multicast port
 TickerScheduler schedule(5);      // 0: sendOSC()
                                   // 1: heartBeatTrigger();
                                   // 2: heartBeatFade();     // not yet implemented
-                                  // 3:
+                                  // 3: runRGBMatrix();      // for testing
                                   // 4:
 
 long heartBeat;                   // heartBeat timer
@@ -131,6 +131,7 @@ void setup() {
   schedule.add(0, 10, sendOSC);                
   schedule.add(1, 2000, heartBeatTrigger);
   schedule.add(2, 200, printRSSI);
+  //schedule.add(3, 1000, runRGBMatrixTest);
 
   /* init module types: */
   switch(moduleType) {   // 0 sender, 1 receiver, 2 sniffer, 3 converter/translator, 4+ currently null

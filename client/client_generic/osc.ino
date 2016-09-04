@@ -6,7 +6,7 @@ void sendOSC() {   // currently triggered by the scheduler
 
   
   if (moduleType == 0) {
-    runEncoder();
+    //runEncoder();
     //runJoystick();
   }
 
@@ -114,9 +114,10 @@ void parseOSC() {
       messageIn.fill(udp.read());
     }
     if (!messageIn.hasError()) {
-      if (messageIn.route("/outputModules", receiveValues));
-//      String buf;
-//      else (messageIn.getAddress(buf, 0);
+      //if (messageIn.route("/outputModules", receiveValues));   // generic receive
+      if (!messageIn.route("/outputModules", runRGBMatrix)){     // RGBMatrix receive
+        //Serial.println("Unrouted Message");     
+      }
     } else {
       Serial.println("Received bad packet");
     }
@@ -127,13 +128,13 @@ void parseOSC() {
 
 /********************************************************************************************************/
 void receiveValues(OSCMessage &m, int addressOffset) {
-  Serial.print("Received: /outputModules \t");
+  //Serial.print("Received: /outputModules \t");
   for (int i = 0; i < m.size(); i++) {
     if (m.isInt(i)) {
       received[i] = m.getInt(i);
       Serial.print(received[i] + "\t");
     }
   }
-  Serial.println();
+  Serial.println("endPacket");
 }
 

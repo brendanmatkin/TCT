@@ -1,3 +1,9 @@
+/* 
+ *  TCT Joystick Module (TCT??)
+ *  ENABLE adc1.begin() in setup if using this! 
+ */
+
+
 float pXVal, pYVal, pZVal;  // previous x, y, z
 
 void runJoystick() {
